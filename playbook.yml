@@ -35,6 +35,7 @@
     - python-pip
     - build-essential  # For installing NVM
     - libssl-dev       # For installing NVM
+    - gdb
     sudo: yes
 
   - name: Install global python packages
