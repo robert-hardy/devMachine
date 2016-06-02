@@ -51,6 +51,7 @@ set wildignore+=**/bower_components
 set wildignore+=**/staging
 set wildignore+=**/venv
 set wildignore+=**/*.pyc
+set wildignore+=**/*.o
 set showcmd
 map <Leader>d "_d
 
