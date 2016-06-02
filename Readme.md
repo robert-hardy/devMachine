@@ -2,6 +2,10 @@ Quickstart
 ====
 Use `vagrant up` from within this directory, then `vagrant ssh`.
 
+The first time it gets used, there might be an error about Ansible. No worries,
+just do `vagrant reload --provision` (there is a bug in the way Vagrant and
+Ansible get along).
+
 If you modify the Ansible playbook then use `vagrant reload --provision`.
 
 Shut down the VM with `vagrant halt`. Use `vagrant destroy` to completely get rid of the VM if you have messed it up and want to start again.
