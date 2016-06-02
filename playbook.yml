@@ -1,0 +1,103 @@
+---
+- hosts: all
+  tasks:
+  - name: Make sure the known hosts file exists
+    file: path=/etc/ssh/ssh_known_hosts state=touch
+    sudo: yes
+
+  - name: Check host name availability
+    shell: "ssh-keygen -f /etc/ssh/ssh_known_hosts -F {{ item }}"
+    with_items:
+      - github.com
+    register: ssh_known_host_results
+    ignore_errors: yes
+
+  - name: Scan the public key
+    shell: "ssh-keyscan -H -T 10 {{ item.item }} >> /etc/ssh/ssh_known_hosts"
+    with_items: ssh_known_host_results.results
+    when: item.stdout == ""
+    sudo: yes
+
+  - name: Add ssh agent line to sudoers, for agent forwarding with become_user
+    lineinfile:
+      dest: /etc/sudoers
+      state: present
+      regexp: SSH_AUTH_SOCK
+      line: Defaults env_keep += "SSH_AUTH_SOCK"
+    sudo: yes
+
+  - name: Apt-install packages
+    apt: name={{item}} state=latest update_cache=yes
+    with_items:
+    - git
+    - tmux
+    - tree
+    - python-pip
+    - build-essential  # For installing NVM
+    - libssl-dev       # For installing NVM
+    sudo: yes
+
+  - name: Install global python packages
+    pip: name={{item}} state=present
+    with_items:
+      - virtualenv
+      - ipython
+      - ipdb
+    sudo: yes
+
+  - name: Create robert user
+    user: name=robert password={{ "foo" | password_hash('sha512') }} shell=/bin/bash
+    sudo: yes
+
+- hosts: all
+  become: yes
+  become_user: robert
+  tasks:
+  - name: Make sure the .ssh directory exists
+    file: path=~/.ssh state=directory
+
+  - name: Make sure the Vundle directory exists
+    file: path=~/.vim/bundle/Vundle.vim state=directory
+
+  - name: Install my Git, Vim, SSH and Tmux config files
+    copy: src={{item.src}} dest={{item.dest}}
+    with_items:
+      - { src: '/vagrant/gitconfig_robert', dest: '~/.gitconfig' }
+      - { src: '/vagrant/vim_rc', dest: '~/.vimrc' }
+      - { src: '/vagrant/tmux_conf', dest: '~/.tmux.conf' }
+      - { src: '/vagrant/ssh_rc', dest: '~/.ssh/rc' }
+      - { src: '/vagrant/dot_vim/', dest: '~/.vim' }
+
+  - name: Put my environment variables in .profile
+    lineinfile: dest=~/.profile line={{item}}
+    with_items: "export LESS=XFR"
+
+  - name: Clone Vundle for Vim
+    git: repo=https://github.com/VundleVim/Vundle.vim.git dest=~/.vim/bundle/Vundle.vim
+
+#   - name: Create the cv/{master,gh-pages} directories
+#     file: path=~/cv/{{item}} state=directory owner=robert group=robert
+#     with_items:
+#     - "master"
+#     - "gh-pages"
+
+  - name: Install NVM by git cloning
+    git: repo=https://github.com/creationix/nvm.git dest=~/.nvm
+
+  - name: Make sure NVM repo is on the right commit
+    shell: "cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`"
+
+  - name: NVM startup in .profile
+    lineinfile: dest=~/.profile line={{item}}
+    with_items:
+      - "export NVM_DIR=\"$HOME/.nvm\""
+      - "[ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" # This loads nvm"
+
+  - name: NVM install 5.2.0
+    shell: "export NVM_DIR=\"$HOME/.nvm\" && [ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\" && nvm install 5.2.0 && nvm alias default 5.2.0"
+
+  - name: Install global npm packages
+    npm: name={{item}} executable=~/.nvm/versions/node/v5.2.0/bin/npm state=present global=yes
+    with_items:
+      - grunt-cli
+      - bower

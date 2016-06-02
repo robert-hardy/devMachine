@@ -1,0 +1,18 @@
+# fix ssh agent when tmux is detached
+setenv -g SSH_AUTH_SOCK $HOME/.ssh/ssh_auth_sock
+
+unbind-key l
+bind-key b last-window
+set-option -g allow-rename off
+set-window-option -g mode-keys vi
+setw -g mode-mouse on
+bind-key m \
+  set -g mode-mouse on
+bind-key M \
+  set -g mode-mouse off
+
+# Vim-style pane selection
+bind h select-pane -L
+bind j select-pane -D
+bind k select-pane -U
+bind l select-pane -R
