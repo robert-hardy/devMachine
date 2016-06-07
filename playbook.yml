@@ -37,6 +37,7 @@
     - libssl-dev       # For installing NVM
     - gdb              # For general C++ stuff
     - libboost-all-dev # For general C++ stuff
+    - mono-devel
     sudo: yes
 
   - name: Install global python packages
