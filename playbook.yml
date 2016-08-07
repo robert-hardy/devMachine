@@ -26,18 +26,27 @@
       line: Defaults env_keep += "SSH_AUTH_SOCK"
     sudo: yes
 
+  - name: Add Felix Krull repo signing key
+    apt_key: id=DB82666C
+    sudo: yes
+
+  - name: Add Felix Krull PPA, for Python 3.5
+    apt_repository: repo='ppa:fkrull/deadsnakes' state='present' update_cache='yes'
+    sudo: yes
+
   - name: Apt-install packages
     apt: name={{item}} state=latest update_cache=yes
     with_items:
-    - git
-    - tmux
-    - tree
-    - python-pip
-    - build-essential  # For installing NVM
-    - libssl-dev       # For installing NVM
-    - gdb              # For general C++ stuff
-    - libboost-all-dev # For general C++ stuff
-    - mono-devel
+      - git
+      - tmux
+      - tree
+      - python-pip
+      - build-essential  # For installing NVM
+      - libssl-dev       # For installing NVM
+      - gdb              # For general C++ stuff
+      - libboost-all-dev # For general C++ stuff
+      - mono-devel
+      - python3.5
     sudo: yes
 
   - name: Install global python packages
