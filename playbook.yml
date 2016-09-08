@@ -26,12 +26,12 @@
       line: Defaults env_keep += "SSH_AUTH_SOCK"
     sudo: yes
 
-  - name: Add Felix Krull repo signing key
-    apt_key: id=DB82666C
-    sudo: yes
-
   - name: Add Felix Krull PPA, for Python 3.5
     apt_repository: repo='ppa:fkrull/deadsnakes' state='present' update_cache='yes'
+    sudo: yes
+
+  - name: Add Felix Krull repo signing key
+    apt_key: id=DB82666C
     sudo: yes
 
   - name: Apt-install packages
