@@ -12,7 +12,6 @@ Vagrant.configure(2) do |config|
   # config.vm.network "forwarded_port", guest: 8000, host: 8000
   # config.vm.network "forwarded_port", guest: 3000, host: 3000
   config.vm.provider "virtualbox" do |vb|
-    vb.name = "devMachine"
     vb.memory = "4096"
   end
   config.ssh.forward_agent = true
