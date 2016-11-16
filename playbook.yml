@@ -57,6 +57,21 @@
       - ipdb
     sudo: yes
 
+  - name: Download Elm-Format zip (0.17)
+    get_url:
+      url: https://github.com/avh4/elm-format/releases/download/0.5.2-alpha/elm-format-0.17-0.5.2-alpha-linux-x64.tgz
+      dest: /tmp
+
+  - name: Create .elm_extras dir
+    file: path=~/.elm_extras state=directory
+
+  - name: Unpack Elm-Format executable
+    unarchive: src=/tmp/elm-format-0.17-0.5.2-alpha-linux-x64.tgz dest=~/.elm_extras
+
+  - name: Update PATH with elm_extras directory
+    lineinfile: dest=~/.bashrc line={{item}}
+    with_items: "PATH=$PATH:~/.elm_extras"
+
   - name: Create robert user
     user: name=robert password={{ "foo" | password_hash('sha512') }} shell=/bin/bash
     sudo: yes
