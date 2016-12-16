@@ -47,6 +47,7 @@
       - libboost-all-dev # For general C++ stuff
       - mono-devel
       - python3.5
+      - python3-dev
     sudo: yes
 
   - name: Install global python packages
