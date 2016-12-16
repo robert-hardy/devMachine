@@ -48,6 +48,7 @@
       - mono-devel
       - python3.5
       - python3-dev
+      - libpython3-all-dev
     sudo: yes
 
   - name: Install global python packages
