@@ -49,6 +49,7 @@
       - python3.5
       - python3-dev
       - libpython3-all-dev
+      - monit
     sudo: yes
 
   - name: Install global python packages
