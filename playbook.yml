@@ -74,7 +74,7 @@
     with_items: "PATH=$PATH:~/.elm_extras"
 
   - name: Create robert user
-    user: name=robert password={{ "foo" | password_hash('sha512') }} shell=/bin/bash
+    user: name=robert password={{ "foo" | password_hash('sha512') }} shell=/bin/bash groups="sudo"
     sudo: yes
 
 - hosts: all
