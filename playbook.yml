@@ -50,6 +50,8 @@
       - python3-dev
       - libpython3-all-dev
       - monit
+      - apache2
+      - nginx
     sudo: yes
 
   - name: Install global python packages
